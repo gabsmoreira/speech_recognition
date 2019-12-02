@@ -106,7 +106,7 @@ O segundo passo é treinar a rede neural para que fique com uma boa acurácia e 
 $ python3 train.py
 ```
 
-Para que o modelo fique aceitável, é necessário deixar pelo menos 8 horas treinando. Caso você não tenha esse tempo, o link para o modelo treinado está aqui: [COLOCAR LINK AQUI]
+Para que o modelo fique aceitável, é necessário deixar pelo menos 8 horas treinando. Caso você não tenha esse tempo, o link para o modelo treinado (e compilado) está aqui: https://github.com/gabsmoreira/speech_recognition/raw/master/my_frozen_graph.pb
 
 A placa Jetson não foi projetada para treinar redes neurais, o ideal seria fazer isso em um computador mais potente e depois transferir o arquivo contento os pesos da rede neural via _SCP_.
 
@@ -397,4 +397,4 @@ Agora para testar o script, basta executar o arquivo python.
 $ python3 audio_stream.py
 ```
 
-Veja o vídeo da demonstração: [LINK da demonstracao]
+Veja o vídeo da demonstração: https://drive.google.com/file/d/1_hk81jBKFu2fsnLgrEPK58aW70D9DL6i/view?usp=sharing
