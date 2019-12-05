@@ -38,11 +38,6 @@ Conecte agora o microfone na placa usando um adaptador USB. Para verificar se o 
 ```bash
 $ sudo dmesg | tail -n10
 ```
-
-A seguinte mensagem deve aparecer.
-
-[COLOCAR FOTO DO DMESG]
-
 ### Update de libs e packages
 ```bash
 $ sudo apt update
