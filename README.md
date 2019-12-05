@@ -25,7 +25,7 @@ Selecione a imagem e o disco corretamente e clique em Flash!
 
 Isso pode levar de 10-15 minutos para ser feito. Vá tomar um café! ☕
 
-Assim que o processo for concluído, remova o cartão do computador e coloque na placa. 
+Assim que o processo for concluído, remova o cartão do computador e coloque na placa.
 
 ## Jetson
 
@@ -34,7 +34,7 @@ Antes de tudo, conecte a placa Jetson em um monitor usando a saída HDMI. Conect
 
 Está na hora de completar os passos para a configuração do sistema operacional. Isso requer a escolha de um usuário, senha e mais algumas configurações que não são relevantes para o projeto.
 
-Conecte agora o microfone na placa usando um adaptador USB. Para verificar se o microfone foi devidamente reconhecido pelo sistema operacional execute o comando dmesg.
+Conecte agora o microfone na placa usando um adaptador USB. Para verificar se o microfone foi devidamente reconhecido pelo sistema operacional execute o comando `dmesg`.
 ```bash
 $ sudo dmesg | tail -n10
 ```
@@ -94,13 +94,13 @@ $ cd tensorflow/tensorflow/examples/speech_commands/
 ```
 
 Note que na pasta existem diversos arquivos, os principais são:
-- train.py : utilizado para treinar o modelo.
+- `train.py` : utilizado para treinar o modelo.
 
-- freeze.py : utilizado para compilar o modelo treinado.
+- `freeze.py` : utilizado para compilar o modelo treinado.
 
-- label_wav.py : utilizado para reconhecer um comando, dado um arquivo .wav de input e um modelo previamente treinado
+- `label_wav.py` : utilizado para reconhecer um comando, dado um arquivo .wav de input e um modelo previamente treinado
 
-O segundo passo é treinar a rede neural para que fique com uma boa acurácia e consiga processar os nossos comandos de voz. Para isso execute o script train.py com os seguintes parâmetros.
+O segundo passo é treinar a rede neural para que fique com uma boa acurácia e consiga processar os nossos comandos de voz. Para isso execute o script `train.py` com os seguintes parâmetros.
 
 ```bash
 $ python3 train.py
@@ -116,7 +116,7 @@ Com o modelo treinado, agora compile usando o checkpoint que quiser:
 $ python3 freeze.py --start_checkpoint=conv.ckpt-12000 --output_file=my_frozen_graph.pb
 ```
 
-Agora teste o modelo treinado. Para isso, é necessário ter o path das labels do modelo (que normalmente está localizado no /tmp/speech_commands_train/conv_labels.txt)
+Agora teste o modelo treinado. Para isso, é necessário ter o path das labels do modelo (que normalmente está localizado no `/tmp/speech_commands_train/conv_labels.txt`)
 
 ```bash
 $  python3 label_wav.py --graph=my_frozen_graph.pb --labels={PATH DAS LABELS} --wav={PATH DO WAV FILE}
@@ -125,7 +125,7 @@ $  python3 label_wav.py --graph=my_frozen_graph.pb --labels={PATH DAS LABELS} --
 
 ### Modificando o script
 
-O primeiro passo é criar um pequeno exemplo de captura e processamento de stream de áudio usando o _pyaudio_.
+O primeiro passo é criar um pequeno exemplo de captura e processamento de stream de áudio usando o `pyaudio`.
 Antes de criar o novo arquivo, instale a biblioteca acima.
 
 ```bash
@@ -398,3 +398,62 @@ $ python3 audio_stream.py
 ```
 
 Veja o vídeo da demonstração: https://drive.google.com/file/d/1_hk81jBKFu2fsnLgrEPK58aW70D9DL6i/view?usp=sharing
+
+
+## Extra - controle do JetBot por comando de voz
+
+Para fazer essa parte do tutorial, é necessário ter o mesmo material/recursos propostos no link do JetBot.
+
+Link do tutorial do JetBot: https://github.com/NVIDIA-AI-IOT/jetbot/wiki/bill-of-materials
+
+Para montar a parte de hardware, basta seguir esse tutorial: https://github.com/NVIDIA-AI-IOT/jetbot/wiki/Hardware-Setup
+
+A parte de software já temos, basta instalar só mais alguns pacotes.
+
+### Intalar bibliotecas adicionais
+
+```bash
+$ cd 
+$ wget https://nvidia.box.com/shared/static/phqe92v26cbhqjohwtvxorrwnmrnfx1o.whl -O torch-1.3.0-cp36-cp36m-linux_aarch64.whl
+$ pip3 install numpy torch-1.3.0-cp36-cp36m-linux_aarch64.whl
+$ pip3 install traitlets
+```
+
+### Instalar biblioteca do JetBot
+
+```bash
+$ git clone https://github.com/NVIDIA-AI-IOT/jetbot
+$ cd jetbot
+$ sudo python3 setup.py install
+```
+Para transformar o código anterior que temos para controlar o robo é bem simples:
+
+Basta instanciar um objeto `robot` antes de todo o script, lembrando sempre de importar a biblioteca do JetBot.
+Eu também optei por fazer um dicionário de ações possíveis do robô, para ser mais econômico nos "ifs".
+
+```python
+from jetbot import Robot
+robot = Robot()
+function_chooser = {'left': robot.left, 'right': robot.right, 'go': robot.forward, 'down': robot.backward}
+```
+Agora o que resta é fazer o robô executar a ação assim que ele reconhece o comando.
+
+```python
+for node_id in top_k:
+    human_string = labels[node_id]
+    score = predictions[node_id]
+    if human_string in ['left', 'right', 'go', 'down']:
+
+        # run robot action
+        function_chooser[human_string](velocity=0.3)
+        time.sleep(0.5)
+        robot.stop()
+```
+
+O código inteiro do movimento do robô está no arquivo chamado `robot_control.py`
+
+A foto da montagem final ficou assim:
+
+![Montagem Final](./img/robot.jpeg)
+
+Veja o vídeo da demonstração: https://drive.google.com/file/d/1HKvpiGYUrSJ5s25z7MBk_wgLwJiyNg9q/view?usp=sharing
